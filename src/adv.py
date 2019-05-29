@@ -1,4 +1,5 @@
 from room import Room
+from player import Player
 
 # Declare all the rooms
 
@@ -39,6 +40,8 @@ room['treasure'].s_to = room['narrow']
 
 # Make a new player object that is currently in the 'outside' room.
 
+player = Player(room['outside'])
+
 # Write a loop that:
 #
 # * Prints the current room name
@@ -49,3 +52,44 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+
+#helper function to store new room into current room
+
+def travel (player, room, attr):
+    if hasattr(room, attr):
+        new_room = getattr(room, attr)
+        print("to " + new_room.name)
+        player.relocate(new_room)
+    else:
+        print("You cannot travel in that direction")
+   
+
+
+while True:
+    print(f"{player.at_room}")
+    cmd = input("Please pick a direction or quit game n as north/e as east/s as south/w as west/q as quit: ")
+
+# If the user enters "q", quit the game.
+    if cmd == "q":
+        break
+# If the user enters a cardinal direction, attempt to move to the room there.
+    elif cmd == "n":
+        print('Moved North')
+        attr = cmd + '_to'
+        travel(player, player.at_room, attr)
+        pass
+    elif cmd == "e":
+        print('Moved East')
+        attr = cmd + '_to'
+        travel(player, player.at_room, attr)
+        pass
+    elif cmd == "s":
+        print('Moved South')
+        attr = cmd + '_to'
+        travel(player, player.at_room, attr)
+        pass
+    elif cmd == "w":
+        print('Moved West')
+        attr = cmd + '_to'
+        travel(player, player.at_room, attr)
+        pass
