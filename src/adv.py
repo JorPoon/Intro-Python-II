@@ -1,5 +1,6 @@
 from room import Room
 from player import Player
+from item import Item
 
 # Declare all the rooms
 
@@ -22,6 +23,24 @@ chamber! Sadly, it has already been completely emptied by
 earlier adventurers. The only exit is to the south."""),
 }
 
+# Declare all items
+
+items = {
+    'potion': Item('Apple Gel', 'Recovers 25 HP'),
+
+    'elixer': Item('Orange Gel', 'Recovers 25 MP'),
+
+    'shield': Item('Aegis', 'Legendary shield of Zeus'),
+
+    'katana': Item('Masamune', 'A blade that can cut through anything'),
+
+    'sword': Item('Sword of GouJian', 'Ancient sword from the East'),
+
+    'spear': Item('Gae Bolg', 'A cursed spear once wielded by ChuCulain'),
+
+    'tome': Item('Dire Thunder', 'A magic book that summons thunder against enemies')
+}
+
 
 # Link rooms together
 
@@ -33,6 +52,25 @@ room['overlook'].s_to = room['foyer']
 room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
+
+#add the items into room
+room['treasure'].placed_item(items['spear'])
+room['treasure'].placed_item(items['tome'])
+room['foyer'].placed_item(items['potion'])
+room['foyer'].placed_item(items['elixer'])
+room['foyer'].placed_item(items['shield'])
+room['narrow'].placed_item(items['potion'])
+room['narrow'].placed_item(items['elixer'])
+room['overlook'].placed_item(items['sword'])
+room['overlook'].placed_item(items['katana'])
+
+
+
+
+
+
+
+
 
 #
 # Main
@@ -66,8 +104,17 @@ def travel (player, room, attr):
 
 
 while True:
-    print(f"{player.at_room}")
-    cmd = input("Please pick a direction or quit game n as north/e as east/s as south/w as west/q as quit: ")
+    # print(f"{player.at_room.items_stored}")
+    print(f"{player.at_room}\n")
+    print("You can: \n")
+    print("Enter in direction letter to move north(n), east(e), south(s), west(w)\n")
+    print ("'items' to check your items in your inventory\n")
+    print("'search' to seach room or area\n")
+    print("'obtain' to take item\n")
+    print("'drop' to drop item\n") 
+    print("'q' to quit game\n")  
+
+    cmd = input("Pick an action:")
 
 # If the user enters "q", quit the game.
     if cmd == "q":
@@ -93,3 +140,40 @@ while True:
         attr = cmd + '_to'
         travel(player, player.at_room, attr)
         pass
+    elif cmd == "items":
+        if len(player.items_held) == 0:
+            print("You currently do not have any items\n")
+            # cmd == input("Pick another action:")
+        else:
+            print("You have :")
+            for item in player.items_held:
+                print(f" {item.name}")
+    elif cmd == "search":
+        if len(player.at_room.items_stored) == 0:
+            print("There are nothing here!")
+        else:
+            for item in player.at_room.items_stored:
+                print(f" You found {item.name} !")
+    elif cmd == "obtain":
+        if len(player.at_room.items_stored) == 0:
+            print("There is nothing to take!")
+        else:
+            for item in player.at_room.items_stored:
+                player.obtain_item(item)
+                print(f"You have obtained: {item.name} ")
+
+            for item in player.at_room.items_stored:
+                player.at_room.remove_item(item)
+                # room.items_stored.remove(item)      
+    elif cmd == "drop":
+        if len(player.items_held) == 0:
+            print("There is nothing to drop!")
+        else:
+            for item in player.items_held:
+                player.drop_item(item)
+                player.at_room.placed_item(item)
+                print(f"You have dropped the {item.name}")
+
+
+
+        
